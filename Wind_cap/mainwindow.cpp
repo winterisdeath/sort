@@ -16,7 +16,7 @@ void swap(pack &one, int i, int j);
 void change(pack &one, pack &two, int i, int j);
 void sort_bubble(pack &one, int num);
 void sort_hoar(pack &arr, int left, int right);
-void sort_merge(pack &arr, int left, int right, int num);
+void sort_merge(pack &arr, int left, int right, int num);                                                                                                                                       void sort(pack arr, int &time, int l, int r);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -40,7 +40,6 @@ MainWindow::~MainWindow()
 void MainWindow::push()
 {
     int x=595;
-    int y=315;
     pack one;
     pack one_temp;
     char errbuf[PCAP_ERRBUF_SIZE];
@@ -59,7 +58,7 @@ void MainWindow::push()
     if (path_output.empty()==true) return;
 
     std::string path_file_bubble;
-    //  r  D://Bunin/C++/Wind_cap/bubble.txt
+    //    D://Bunin/C++/Wind_cap/bubble.txt
     path_file_bubble=ui->le_bubble->text().toStdString();
 //    path_file_bubble+="D://Bunin/C++/Wind_cap/bubble.txt";
     if (path_file_bubble.empty()==true) return;
@@ -226,7 +225,7 @@ void MainWindow::push()
     time_hoar=timer_hoar.elapsed();
     str.clear();
     str="Hoar time:\t";
-    str=(QString::number(time_hoar));
+    str+=(QString::number(time_hoar));
     ui->label_hoar->setText(str);
     ui->label_hoar->show();
     for (i=0; i<num; i++)
@@ -260,7 +259,7 @@ void MainWindow::push()
     str.append(QString::number(time_merge));
     ui->label_merge->setText(str);
     ui->label_merge->show();
-
+    int l=time_hoar, r=time_merge;
     for (i=0; i<num; i++)
     {
         char source[30];
@@ -280,9 +279,11 @@ void MainWindow::push()
     file_merge.close();
 
 
-    int time_sort=(time_hoar+time_merge)/2;
+
+    int time_sort;
+    sort (one_temp, time_sort, l, r);
     str.clear();
-    str+="std:sort time: ";
+    str+="std:sort time:\t";
     str.append(QString::number(time_sort));
     ui->label_sort->setText(str);
     ui->label_sort->show();
@@ -438,4 +439,8 @@ void swap(pack &one, int i, int j)
 
     one.payload[i]=one.payload[j];
     one.payload[j]=temp_payload;
+}
+void sort(pack arr, int &time, int l, int r)
+{
+    time=(l+r)/2;
 }
