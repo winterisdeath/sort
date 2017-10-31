@@ -41,17 +41,13 @@ void MainWindow::push()
 {
     int x=595;
     int y=315;
-    //кодировка windows-1251/CP1251
     pack one;
     pack one_temp;
-    system ("chcp 1251");
-    system("cls");
-    setlocale(LC_ALL, "Russian");
     char errbuf[PCAP_ERRBUF_SIZE];
 
     char *path=new char[CHAR_MAX];
     QString Qpath=ui->le_pcap->text();
-    //  D://Bunin/C++/Wind_cap/example.cap
+//      D://Bunin/C++/Wind_cap/example.cap
 //    Qpath+="D://Bunin/C++/Wind_cap/example.cap";
     if (Qpath.isEmpty()==true) return;
     strcpy(path, Qpath.toStdString().c_str());
@@ -63,7 +59,7 @@ void MainWindow::push()
     if (path_output.empty()==true) return;
 
     std::string path_file_bubble;
-    //    D://Bunin/C++/Wind_cap/bubble.txt
+    //  r  D://Bunin/C++/Wind_cap/bubble.txt
     path_file_bubble=ui->le_bubble->text().toStdString();
 //    path_file_bubble+="D://Bunin/C++/Wind_cap/bubble.txt";
     if (path_file_bubble.empty()==true) return;
@@ -117,7 +113,7 @@ void MainWindow::push()
     const u_char *packet;
     std::ofstream output;
 
-    output.open(path_output, std::ios::out);
+    output.open(path_output.c_str(), std::ios::out);
     char *buf=new char[255];
     int count=0;
     if (ui->le_num->text()=="" ||
@@ -191,20 +187,17 @@ void MainWindow::push()
     one_temp=one;
     std::fstream file_bubble;
 
-    file_bubble.open(path_file_bubble, std::ios::out);
+    file_bubble.open(path_file_bubble.c_str(), std::ios::out);
     int time_bubble;
     QTime timer_bubble;
     timer_bubble.start();
     sort_bubble(one_temp, num);
     time_bubble=timer_bubble.elapsed();
     str.clear();
-    str+=ui->label_bubble->text();
+    str="Bubble time:\t";
     str.append(QString::number(time_bubble));
     ui->label_bubble->setText(str);
     ui->label_bubble->show();
-//    resize (x, y+30);
-//    y+=30;
-//    ui->centralWidget->resize(x,y);
     for (i=0; i<num; i++)
     {
         char source[30];
@@ -225,18 +218,17 @@ void MainWindow::push()
 
     one_temp=one;
     std::fstream file_hoar;
-    file_hoar.open(path_file_hoar, std::ios::out);
+    file_hoar.open(path_file_hoar.c_str(), std::ios::out);
     int time_hoar;
     QTime timer_hoar;
     timer_hoar.start();
     sort_hoar(one_temp, 0, num-1);
     time_hoar=timer_hoar.elapsed();
     str.clear();
-    str+=ui->label_hoar->text();
-    str.append(QString::number(time_hoar));
+    str="Hoar time:\t";
+    str=(QString::number(time_hoar));
     ui->label_hoar->setText(str);
     ui->label_hoar->show();
-    //    cout<<"time hoar: "<<time_hoar<<endl;
     for (i=0; i<num; i++)
     {
         char source[30];
@@ -254,23 +246,21 @@ void MainWindow::push()
         file_hoar<<buf;
     }
     file_hoar.close();
-//    resize (x, y+20);
-//    y+=20;
 
     one_temp=one;
     std::fstream file_merge;
-    file_merge.open(path_file_merge, std::ios::out);
+    file_merge.open(path_file_merge.c_str(), std::ios::out);
     int time_merge;
     QTime timer_merge;
     timer_merge.start();
     sort_merge(one_temp, 0, num-1, num);
     time_merge=timer_merge.elapsed();
     str.clear();
-    str+=ui->label_merge->text();
+    str+="Merge time:\t";
     str.append(QString::number(time_merge));
     ui->label_merge->setText(str);
     ui->label_merge->show();
-    //    cout<<"time merge: "<<time_merge;
+
     for (i=0; i<num; i++)
     {
         char source[30];
@@ -288,20 +278,16 @@ void MainWindow::push()
         file_merge<<buf;
     }
     file_merge.close();
-//    resize (x, y+20);
-//    y+=20;
+
 
     int time_sort=(time_hoar+time_merge)/2;
     str.clear();
-    str+=ui->label_sort->text();
+    str+="std:sort time: ";
     str.append(QString::number(time_sort));
     ui->label_sort->setText(str);
     ui->label_sort->show();
-
-//    resize (x, y+20);
-//    y+=20;
     std::fstream file_sort;
-    file_sort.open(path_file_sort, std::ios::out);
+    file_sort.open(path_file_sort.c_str(), std::ios::out);
     for (i=0; i<num; i++)
     {
         char source[30];
