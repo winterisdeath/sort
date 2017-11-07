@@ -154,6 +154,17 @@ int main()
                  <<packets_temp[i].out().toStdString().c_str()<<endl;
     }
 
+    packets_temp=packets;
+    fstream file_sort;
+    file_sort.open("D://Bunin/C++/MyCap/sort.txt", ios::out );
+    if (!file_sort.is_open()) return -1;
+    sort(packets_temp.begin(), packets_temp.end());
+    for (int i=0; i<packets_temp.size(); i++)
+    {
+        file_sort<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
+                 <<packets_temp[i].out().toStdString().c_str()<<endl;
+    }
+
     cout<<endl<<"Done";
     file_merge.close();
     file_bubble.close();
@@ -224,47 +235,29 @@ bool check (unsigned char *buf)
         return false;
     }
 }
-bool less_ip(ip_address a, ip_address b)
-{
-    if (a.x1<b.x1)  return true;
-    else
-        if (a.x1==b.x1)
-            if (a.x2<b.x2)   return true;
-            else
-                if (a.x2==b.x2)
-                    if (a.x3<b.x3) return true;
-                    else
-                        if (a.x3==b.x3)
-                            if (a.x4<b.x4)  return true;
-                            else return false;
-                        else return false;
-                else return false;
-        else return false;
+//bool comp(packet a, packet b)
+//{
+//    if (a.destination.x1<b.destination.x1)  return true;
+//    else
+//        if (a.destination.x1==b.destination.x1)
+//            if (a.destination.x2<b.destination.x2)   return true;
+//            else
+//                if (a.destination.x2==b.destination.x2)
+//                    if (a.destination.x3<b.destination.x3) return true;
+//                    else
+//                        if (a.destination.x3==b.destination.x3)
+//                            if (a.destination.x4<b.destination.x4)  return true;
+//                            else return false;
+//                        else return false;
+//                else return false;
+//        else return false;
 
-}
-bool comp(packet a, packet b)
-{
-    if (a.destination.x1<b.destination.x1)  return true;
-    else
-        if (a.destination.x1==b.destination.x1)
-            if (a.destination.x2<b.destination.x2)   return true;
-            else
-                if (a.destination.x2==b.destination.x2)
-                    if (a.destination.x3<b.destination.x3) return true;
-                    else
-                        if (a.destination.x3==b.destination.x3)
-                            if (a.destination.x4<b.destination.x4)  return true;
-                            else return false;
-                        else return false;
-                else return false;
-        else return false;
-
-}
+//}
 void sort_bubble(QVector<packet> &vec, int num)
 {
     for (int i=0; i<num-1; i++)
         for (int j=0; j<num-i-1; j++)
-            if (comp(vec[j+1], vec[j])==true)
+            if (vec[j+1]<vec[j])
                 swap(vec[j], vec[j+1]);
 }
 void sort_hoar(QVector<packet> &vec, int left, int right)
@@ -274,9 +267,9 @@ void sort_hoar(QVector<packet> &vec, int left, int right)
     int mid=(left+right+1)/2;
     do
     {
-        while (comp(vec[i], vec[mid])==true)
+        while (vec[i]<vec[mid])
             i++;
-        while (comp(vec[mid], vec[j])==true)
+        while (vec[mid]<vec[j])
             j--;
         if (i<=j)
         {
@@ -293,7 +286,7 @@ void sort_merge (QVector<packet> &vec, int left, int right, int num)
     if (left==right) return;
     if (right-left==1)
     {
-        if (comp(vec[right], vec[left])==true)
+        if (vec[right]<vec[left])
             swap (vec[left], vec[right]);
         return;
     }
@@ -319,7 +312,7 @@ void sort_merge (QVector<packet> &vec, int left, int right, int num)
             vec_temp[cur]=vec[_left];
             cur++; _left++;
         }
-        else if (comp(vec[_right], vec[_left]))
+        else if (vec[_right]<vec[_left])
         {
             vec_temp[cur]=vec[_right];
             cur++; _right++;

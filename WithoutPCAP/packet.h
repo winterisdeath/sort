@@ -49,6 +49,7 @@ public:
     packet(const packet& temp);
     ~packet();
     packet& operator = (const packet& temp);
+    bool operator < (const packet& temp);
 };
 
 #endif // PACKET_H
