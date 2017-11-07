@@ -112,16 +112,16 @@ int main()
         }
     }
 
-    cout<<endl<<"Work is over"<<endl
-       <<"You can find results in file out.txt";
+    cout<<endl<<"Reading is over"<<endl
+       <<"You can find results in file out.txt"<<endl<<"Now sorting...";
     QVector<packet> packets_temp;
-    packets_temp=packets;
-    for (int i=0; i<packets_temp.size(); i++)
+    for (int i=0; i<packets.size(); i++)
     {
-        output<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
-             <<packets_temp[i].out().toStdString().c_str()<<endl;
+        output<<"Packet "<<i+1<<": "<<packets[i].destination_string().toStdString()<<"\n"
+             <<packets[i].out().toStdString().c_str()<<endl;
     }
 
+    packets_temp=packets;
     fstream file_bubble;
     file_bubble.open("D://Bunin/C++/MyCap/bubble.txt", ios::out );
     if (!file_bubble.is_open()) return -1;
@@ -132,16 +132,18 @@ int main()
                   <<packets_temp[i].out().toStdString().c_str()<<endl;
     }
 
+    packets_temp=packets;
     fstream file_hoar;
     file_hoar.open("D://Bunin/C++/MyCap/hoar.txt", ios::out );
     if (!file_hoar.is_open()) return -1;
-    sort_bubble(packets_temp,packets_temp.size());
+    sort_hoar(packets_temp, 0, packets_temp.size()-1);
     for (int i=0; i<packets_temp.size(); i++)
     {
         file_hoar<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
                   <<packets_temp[i].out().toStdString().c_str()<<endl;
     }
 
+    packets_temp=packets;
     fstream file_merge;
     file_merge.open("D://Bunin/C++/MyCap/merge.txt", ios::out );
     if (!file_merge.is_open()) return -1;
@@ -151,8 +153,11 @@ int main()
         file_merge<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
                  <<packets_temp[i].out().toStdString().c_str()<<endl;
     }
+
     cout<<endl<<"Done";
     file_merge.close();
+    file_bubble.close();
+    file_hoar.close();
     output.close();
     file.close();
     delete[] buf;
