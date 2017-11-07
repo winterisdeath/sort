@@ -15,7 +15,7 @@ void sort_bubble(QVector<packet> &vec, int num);
 void sort_hoar(QVector<packet> &vec, int left, int right);
 void sort_merge(QVector<packet> &vec, int left, int right, int num);
 bool comp(packet a, packet b);
-
+unsigned int find_simple(QVector<packet> vec, ip_address temp);
 
 ofstream output;
 int main()
@@ -140,7 +140,7 @@ int main()
     for (int i=0; i<packets_temp.size(); i++)
     {
         file_hoar<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
-                  <<packets_temp[i].out().toStdString().c_str()<<endl;
+                <<packets_temp[i].out().toStdString().c_str()<<endl;
     }
 
     packets_temp=packets;
@@ -162,10 +162,18 @@ int main()
     for (int i=0; i<packets_temp.size(); i++)
     {
         file_sort<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
-                 <<packets_temp[i].out().toStdString().c_str()<<endl;
+                <<packets_temp[i].out().toStdString().c_str()<<endl;
     }
 
     cout<<endl<<"Done";
+    cout<<"Finding ip: 192.168.43.109 (first)..."<<endl;
+    ip_address temp;
+    temp.x1=213;
+    temp.x2=180;
+    temp.x3=204;
+    temp.x4=90;
+    unsigned int number=find_simple(packets, temp);
+    cout<<"Foud, packet number: "<<number+1<<endl;
     file_merge.close();
     file_bubble.close();
     file_hoar.close();
@@ -327,7 +335,13 @@ void sort_merge (QVector<packet> &vec, int left, int right, int num)
         vec[i+left]=vec_temp[i];
 }
 
-
+unsigned int find_simple(QVector<packet> vec, ip_address temp)
+{
+    for (int i=0; i<vec.size(); i++)
+        if (vec[i].destination==temp)
+            return i;
+    return -1;
+}
 
 
 

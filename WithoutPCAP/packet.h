@@ -11,6 +11,14 @@ public:
     unsigned int throughput;
     unsigned int reliability;
     unsigned int ECN;
+    bool operator ==(const service_type& temp)
+    {
+        return (delay==temp.delay &&
+                    ECN==temp.ECN &&
+                    priority==temp.priority &&
+                    reliability==temp.reliability &&
+                    throughput==temp.throughput);
+    }
 };
 
 struct flags
@@ -19,7 +27,14 @@ public:
     unsigned int reserved;
     unsigned int fragment;
     unsigned int more_fragments;
+    bool operator == (const flags& temp)
+    {
+        return (reserved==temp.reserved &&
+                fragment==temp.fragment &&
+                more_fragments==temp.more_fragments);
+    }
 };
+
 struct ip_address
 {
 public:
@@ -27,6 +42,11 @@ public:
     unsigned int x2;
     unsigned int x3;
     unsigned int x4;
+    bool operator == (const ip_address& temp)
+    {
+        return (x1==temp.x1 && x2==temp.x2
+                && x3==temp.x3 && x4==temp.x4);
+    }
 };
 
 class packet
@@ -50,6 +70,7 @@ public:
     ~packet();
     packet& operator = (const packet& temp);
     bool operator < (const packet& temp);
+    bool operator == (const packet& temp);
 };
 
 #endif // PACKET_H

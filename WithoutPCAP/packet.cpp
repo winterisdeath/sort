@@ -52,24 +52,10 @@ packet::~packet()
 }
 packet::packet(const packet &temp)
 {
-    service.delay=temp.service.delay;
-    service.ECN=temp.service.ECN;
-    service.priority=temp.service.priority;
-    service.reliability=temp.service.reliability;
-    service.throughput=temp.service.throughput;
-    flag.fragment=temp.flag.fragment;
-    flag.more_fragments=temp.flag.more_fragments;
-    flag.reserved=temp.flag.reserved;
-    sourse.x1=temp.sourse.x1;
-    sourse.x2=temp.sourse.x2;
-    sourse.x3=temp.sourse.x3;
-    sourse.x4=temp.sourse.x4;
-    destination.x1=temp.destination.x1;
-    destination.x2=temp.destination.x2;
-    destination.x3=temp.destination.x3;
-    destination.x4=temp.destination.x4;
-
-
+    service=temp.service;
+    flag=temp.flag;
+    sourse=temp.sourse;
+    destination=temp.destination;
     total_len=temp.total_len;
     identification=temp.identification;
     fragment_offset=temp.fragment_offset;
@@ -81,23 +67,10 @@ packet& packet::operator = (const packet &temp)
 {
     if (this!=&temp)
     {
-        service.delay=temp.service.delay;
-        service.ECN=temp.service.ECN;
-        service.priority=temp.service.priority;
-        service.reliability=temp.service.reliability;
-        service.throughput=temp.service.throughput;
-        flag.fragment=temp.flag.fragment;
-        flag.more_fragments=temp.flag.more_fragments;
-        flag.reserved=temp.flag.reserved;
-        sourse.x1=temp.sourse.x1;
-        sourse.x2=temp.sourse.x2;
-        sourse.x3=temp.sourse.x3;
-        sourse.x4=temp.sourse.x4;
-        destination.x1=temp.destination.x1;
-        destination.x2=temp.destination.x2;
-        destination.x3=temp.destination.x3;
-        destination.x4=temp.destination.x4;
-
+        service=temp.service;
+        flag=temp.flag;
+        sourse=temp.sourse;
+        destination=temp.destination;
         total_len=temp.total_len;
         identification=temp.identification;
         fragment_offset=temp.fragment_offset;
@@ -118,6 +91,29 @@ bool packet::operator < (const packet& temp)
             if (destination.x3!=temp.destination.x3)
                 return destination.x3<temp.destination.x3;
             else return destination.x4<temp.destination.x4;
+}
+
+bool packet::operator == (const packet& temp)
+{
+    if (service.delay==temp.service.delay &&
+            service.ECN==temp.service.ECN &&
+            service.priority==temp.service.priority &&
+            service.reliability==temp.service.reliability &&
+            service.throughput==temp.service.throughput &&
+            flag.fragment==temp.flag.fragment &&
+            flag.more_fragments==temp.flag.more_fragments &&
+            flag.reserved==temp.flag.reserved &&
+            sourse==temp.sourse &&
+            destination==temp.destination &&
+            total_len==temp.total_len &&
+            identification==temp.identification &&
+            fragment_offset==temp.fragment_offset &&
+            ttl==temp.ttl &&
+            protocol==temp.protocol &&
+            checksum==temp.protocol)
+        return true;
+    else
+        return false;
 }
 
 QString packet::out()
