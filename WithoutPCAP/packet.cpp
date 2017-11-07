@@ -2,28 +2,28 @@
 QString protocol_decode (int num);
 packet::packet()
 {
-    this->checksum=0;
-    this->fragment_offset=0;
-    this->ttl=0;
-    this->identification=0;
-    this->total_len=0;
-    this->protocol=0;
-    this->flag.fragment=0;
-    this->flag.more_fragments=0;
-    this->flag.reserved=0;
-    this->service.delay=0;
-    this->service.ECN=0;
-    this->service.priority=0;
-    this->service.reliability=0;
-    this->service.throughput=0;
-    this->destination.x1=0;
-    this->destination.x2=0;
-    this->destination.x3=0;
-    this->destination.x4=0;
-    this->sourse.x1=0;
-    this->sourse.x2=0;
-    this->sourse.x3=0;
-    this->sourse.x4=0;
+    checksum=0;
+    fragment_offset=0;
+    ttl=0;
+    identification=0;
+    total_len=0;
+    protocol=0;
+    flag.fragment=0;
+    flag.more_fragments=0;
+    flag.reserved=0;
+    service.delay=0;
+    service.ECN=0;
+    service.priority=0;
+    service.reliability=0;
+    service.throughput=0;
+    destination.x1=0;
+    destination.x2=0;
+    destination.x3=0;
+    destination.x4=0;
+    sourse.x1=0;
+    sourse.x2=0;
+    sourse.x3=0;
+    sourse.x4=0;
 }
 packet::~packet()
 {
@@ -90,9 +90,9 @@ bool packet::operator < (const packet& temp)
         else
             if (destination.x3!=temp.destination.x3)
                 return destination.x3<temp.destination.x3;
-            else return destination.x4<temp.destination.x4;
+            else
+                    return destination.x4<temp.destination.x4;
 }
-
 bool packet::operator == (const packet& temp)
 {
     if (service.delay==temp.service.delay &&
@@ -115,7 +115,6 @@ bool packet::operator == (const packet& temp)
     else
         return false;
 }
-
 QString packet::out()
 {
     QString str;
@@ -232,7 +231,6 @@ QString protocol_decode (int num)
         return "It is too lazy to know them all";
     }
 }
-
 QString packet::source_string()
 {
     QString full_str=QString::number(sourse.x1)+'.'+
@@ -241,7 +239,6 @@ QString packet::source_string()
             QString::number(sourse.x4);
     return full_str;
 }
-
 QString packet::destination_string()
 {
     QString full_str=QString::number(destination.x1)+'.'+

@@ -5,6 +5,7 @@
 #include <QString>
 #include <cstddef>
 #include <QVector>
+#include <QTime>
 #include "packet.h"
 
 using namespace std;
@@ -15,7 +16,8 @@ void sort_bubble(QVector<packet> &vec, int num);
 void sort_hoar(QVector<packet> &vec, int left, int right);
 void sort_merge(QVector<packet> &vec, int left, int right, int num);
 bool comp(packet a, packet b);
-unsigned int find_simple(QVector<packet> vec, ip_address temp);
+int search_simple(QVector<packet> vec, ip_address temp);
+int search_binary (QVector<packet> vec, int left, int right, ip_address key);
 
 ofstream output;
 int main()
@@ -29,7 +31,11 @@ int main()
     output.open("D://Bunin/C++/MyCap/out.txt", ios::out );
     if (!output.is_open()) return -1;
     file.open("D://Bunin/C++/MyCap/my.pcap", ios::binary|ios::in);
-    if (!file.is_open()) return -1;
+    if (!file.is_open())
+    {
+        cout<<"File *.pcap not found!";
+        return -1;
+    }
     file.read((char*)buf, 3);
     int count=0;
     cout<<"Working..."<<endl;
@@ -125,7 +131,11 @@ int main()
     fstream file_bubble;
     file_bubble.open("D://Bunin/C++/MyCap/bubble.txt", ios::out );
     if (!file_bubble.is_open()) return -1;
+    QTime timer_bubble;
+    timer_bubble.start();
     sort_bubble(packets_temp,packets_temp.size());
+    int time_bubble=timer_bubble.elapsed();
+    cout<<endl<<endl<<"Sorting time:"<<endl<<"  Bubble:\t"<<time_bubble<<endl;
     for (int i=0; i<packets_temp.size(); i++)
     {
         file_bubble<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
@@ -136,7 +146,11 @@ int main()
     fstream file_hoar;
     file_hoar.open("D://Bunin/C++/MyCap/hoar.txt", ios::out );
     if (!file_hoar.is_open()) return -1;
+    QTime timer_hoar;
+    timer_hoar.start();
     sort_hoar(packets_temp, 0, packets_temp.size()-1);
+    int time_hoar=timer_hoar.elapsed();
+    cout<<"  Hoar:\t\t"<<time_hoar;
     for (int i=0; i<packets_temp.size(); i++)
     {
         file_hoar<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
@@ -147,7 +161,11 @@ int main()
     fstream file_merge;
     file_merge.open("D://Bunin/C++/MyCap/merge.txt", ios::out );
     if (!file_merge.is_open()) return -1;
+    QTime timer_merge;
+    timer_merge.start();
     sort_merge(packets_temp, 0, packets_temp.size()-1, packets_temp.size());
+    int time_merge=timer_merge.elapsed();
+    cout<<endl<<"  Merge:\t"<<time_merge;
     for (int i=0; i<packets_temp.size(); i++)
     {
         file_merge<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
@@ -158,22 +176,34 @@ int main()
     fstream file_sort;
     file_sort.open("D://Bunin/C++/MyCap/sort.txt", ios::out );
     if (!file_sort.is_open()) return -1;
+    QTime timer_sort;
+    timer_sort.start();
     sort(packets_temp.begin(), packets_temp.end());
+    int time_sort=timer_sort.elapsed();
+    cout<<endl<<"  STL:\t\t"<<time_sort<<endl;
     for (int i=0; i<packets_temp.size(); i++)
     {
         file_sort<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
                 <<packets_temp[i].out().toStdString().c_str()<<endl;
     }
 
-    cout<<endl<<"Done";
-    cout<<"Finding ip: 192.168.43.109 (first)..."<<endl;
+    cout<<endl<<"Finding ip: 192.168.43.109 ..."<<endl;
     ip_address temp;
     temp.x1=213;
     temp.x2=180;
     temp.x3=204;
     temp.x4=90;
-    unsigned int number=find_simple(packets, temp);
-    cout<<"Foud, packet number: "<<number+1<<endl;
+    QTime timer_simple;
+    timer_simple.start();
+    int number=search_simple(packets, temp);
+    int time_simple=timer_simple.elapsed();
+    cout<<"Searching time:"<<endl
+       <<"  Simple:\t\t"<<time_simple<<endl;
+    QTime timer_binary;
+    timer_binary.start();
+    int number_bin=search_binary(packets_temp, 0, packets_temp.size(), temp);
+    int time_binary=timer_binary.elapsed();
+    cout<<"  Binary:\t\t"<<time_binary<<endl;
     file_merge.close();
     file_bubble.close();
     file_hoar.close();
@@ -335,14 +365,31 @@ void sort_merge (QVector<packet> &vec, int left, int right, int num)
         vec[i+left]=vec_temp[i];
 }
 
-unsigned int find_simple(QVector<packet> vec, ip_address temp)
+int search_simple(QVector<packet> vec, ip_address temp)
 {
     for (int i=0; i<vec.size(); i++)
         if (vec[i].destination==temp)
             return i;
     return -1;
 }
+int search_binary (QVector<packet> vec, int left, int right, ip_address key)
+{
+    int midd = 0;
+    while (1)
+    {
+        midd = (left + right) / 2;
 
+        if (key < vec[midd].destination)       // если искомое меньше значения в ячейке
+            right = midd - 1;      // смещаем правую границу поиска
+        else if (vec[midd].destination < key )  // если искомое больше значения в ячейке
+            left = midd + 1;	   // смещаем левую границу поиска
+        else                       // иначе (значения равны)
+            return midd;           // функция возвращает индекс ячейки
+
+        if (left > right)          // если границы сомкнулись
+            return -1;
+    }
+}
 
 
 

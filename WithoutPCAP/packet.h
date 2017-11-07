@@ -42,6 +42,18 @@ public:
     unsigned int x2;
     unsigned int x3;
     unsigned int x4;
+    bool operator < (const ip_address& temp)
+    {
+        if (x1!=temp.x1)
+            return x1<temp.x1;
+        else
+            if (x2!=temp.x2)
+                return x2!=temp.x2;
+            else
+                if (x3!=temp.x3)
+                    return x3<temp.x3;
+                else return x4<temp.x4;
+    }
     bool operator == (const ip_address& temp)
     {
         return (x1==temp.x1 && x2==temp.x2
