@@ -15,12 +15,14 @@ public:
 
 struct flags
 {
+public:
     unsigned int reserved;
     unsigned int fragment;
     unsigned int more_fragments;
 };
 struct ip_address
 {
+public:
     unsigned int x1;
     unsigned int x2;
     unsigned int x3;
@@ -40,13 +42,13 @@ public:
     unsigned int ttl;
     unsigned int protocol;
     unsigned int checksum;
-    unsigned int source_int();
     QString source_string();
-    unsigned int destination_int();
     QString destination_string();
     QString out();
     packet();
+    packet(const packet& temp);
     ~packet();
+    packet& operator = (const packet& temp);
 };
 
 #endif // PACKET_H

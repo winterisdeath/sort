@@ -50,6 +50,64 @@ packet::~packet()
     this->sourse.x3=0;
     this->sourse.x4=0;
 }
+packet::packet(const packet &temp)
+{
+        service.delay=temp.service.delay;
+        service.ECN=temp.service.ECN;
+        service.priority=temp.service.priority;
+        service.reliability=temp.service.reliability;
+        service.throughput=temp.service.throughput;
+        flag.fragment=temp.flag.fragment;
+        flag.more_fragments=temp.flag.more_fragments;
+        flag.reserved=temp.flag.reserved;
+        sourse.x1=temp.sourse.x1;
+        sourse.x2=temp.sourse.x2;
+        sourse.x3=temp.sourse.x3;
+        sourse.x4=temp.sourse.x4;
+        destination.x1=temp.destination.x1;
+        destination.x2=temp.destination.x2;
+        destination.x3=temp.destination.x3;
+        destination.x4=temp.destination.x4;
+
+
+        total_len=temp.total_len;
+        identification=temp.identification;
+        fragment_offset=temp.fragment_offset;
+        ttl=temp.ttl;
+        protocol=temp.protocol;
+        checksum=temp.protocol;
+}
+packet& packet::operator =(const packet &temp)
+{
+    if (this!=&temp)
+    {
+    service.delay=temp.service.delay;
+    service.ECN=temp.service.ECN;
+    service.priority=temp.service.priority;
+    service.reliability=temp.service.reliability;
+    service.throughput=temp.service.throughput;
+    flag.fragment=temp.flag.fragment;
+    flag.more_fragments=temp.flag.more_fragments;
+    flag.reserved=temp.flag.reserved;
+    sourse.x1=temp.sourse.x1;
+    sourse.x2=temp.sourse.x2;
+    sourse.x3=temp.sourse.x3;
+    sourse.x4=temp.sourse.x4;
+    destination.x1=temp.destination.x1;
+    destination.x2=temp.destination.x2;
+    destination.x3=temp.destination.x3;
+    destination.x4=temp.destination.x4;
+
+    total_len=temp.total_len;
+    identification=temp.identification;
+    fragment_offset=temp.fragment_offset;
+    ttl=temp.ttl;
+    protocol=temp.protocol;
+    checksum=temp.protocol;
+    }
+    return *this;
+}
+
 QString packet::out()
 {
     QString str;
@@ -163,17 +221,10 @@ QString protocol_decode (int num)
     case 121:
         return "SMP";
     default:
-        return "It is too lazy to learn them all";
+        return "It is too lazy to know them all";
     }
 }
-unsigned int packet::source_int()
-{
-    return QString(QString::number(sourse.x1)+
-                   QString::number(sourse.x2)+
-                   QString::number(sourse.x3)+
-                   QString::number(sourse.x4)
-                   ).toInt();
-}
+
 QString packet::source_string()
 {
     QString full_str=QString::number(sourse.x1)+'.'+
@@ -182,14 +233,7 @@ QString packet::source_string()
             QString::number(sourse.x4);
     return full_str;
 }
-unsigned int packet::destination_int()
-{
-    return QString(QString::number(destination.x1)+
-                   QString::number(destination.x2)+
-                   QString::number(destination.x3)+
-                   QString::number(destination.x4)
-                   ).toInt();
-}
+
 QString packet::destination_string()
 {
     QString full_str=QString::number(destination.x1)+'.'+

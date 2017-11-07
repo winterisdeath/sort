@@ -11,6 +11,10 @@ using namespace std;
 void showInBit(int num);
 bool check (unsigned char* buf);
 void protocol (int num);
+void sort_bubble(QVector<packet> &vec, int num);
+void sort_hoar(QVector<packet> &vec, int left, int right);
+void sort_merge(QVector<packet> &vec, int left, int right, int num);
+bool comp(packet a, packet b);
 
 
 ofstream output;
@@ -110,13 +114,45 @@ int main()
 
     cout<<endl<<"Work is over"<<endl
        <<"You can find results in file out.txt";
-
-    for (int i=0; i<packets.size(); i++)
+    QVector<packet> packets_temp;
+    packets_temp=packets;
+    for (int i=0; i<packets_temp.size(); i++)
     {
-        output<<"Packet "<<i+1<<":\n"
-             <<packets[i].out().toStdString().c_str()<<endl;
+        output<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
+             <<packets_temp[i].out().toStdString().c_str()<<endl;
     }
 
+    fstream file_bubble;
+    file_bubble.open("D://Bunin/C++/MyCap/bubble.txt", ios::out );
+    if (!file_bubble.is_open()) return -1;
+    sort_bubble(packets_temp,packets_temp.size());
+    for (int i=0; i<packets_temp.size(); i++)
+    {
+        file_bubble<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
+                  <<packets_temp[i].out().toStdString().c_str()<<endl;
+    }
+
+    fstream file_hoar;
+    file_hoar.open("D://Bunin/C++/MyCap/hoar.txt", ios::out );
+    if (!file_hoar.is_open()) return -1;
+    sort_bubble(packets_temp,packets_temp.size());
+    for (int i=0; i<packets_temp.size(); i++)
+    {
+        file_hoar<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
+                  <<packets_temp[i].out().toStdString().c_str()<<endl;
+    }
+
+    fstream file_merge;
+    file_merge.open("D://Bunin/C++/MyCap/merge.txt", ios::out );
+    if (!file_merge.is_open()) return -1;
+    sort_merge(packets_temp, 0, packets_temp.size()-1, packets_temp.size());
+    for (int i=0; i<packets_temp.size(); i++)
+    {
+        file_merge<<"Packet "<<i+1<<": "<<packets_temp[i].destination_string().toStdString()<<"\n"
+                 <<packets_temp[i].out().toStdString().c_str()<<endl;
+    }
+    cout<<endl<<"Done";
+    file_merge.close();
     output.close();
     file.close();
     delete[] buf;
@@ -150,7 +186,6 @@ void showInBit(int num)
 
     cout<<endl<<"byte: "<<byte.toStdString()<<endl;
 }
-
 bool check (unsigned char *buf)
 {
     int x=static_cast<int>(buf[2]);
@@ -175,8 +210,7 @@ bool check (unsigned char *buf)
             temp.append(QString::number(arr[i], 16));
     }
     temp.append(QString::number(x, 16));
-            if (temp=="08004")
-//    if (temp=="32452")
+    if (temp=="08004")
     {
         return true;
     }
@@ -185,3 +219,128 @@ bool check (unsigned char *buf)
         return false;
     }
 }
+bool less_ip(ip_address a, ip_address b)
+{
+    if (a.x1<b.x1)  return true;
+    else
+        if (a.x1==b.x1)
+            if (a.x2<b.x2)   return true;
+            else
+                if (a.x2==b.x2)
+                    if (a.x3<b.x3) return true;
+                    else
+                        if (a.x3==b.x3)
+                            if (a.x4<b.x4)  return true;
+                            else return false;
+                        else return false;
+                else return false;
+        else return false;
+
+}
+bool comp(packet a, packet b)
+{
+    if (a.destination.x1<b.destination.x1)  return true;
+    else
+        if (a.destination.x1==b.destination.x1)
+            if (a.destination.x2<b.destination.x2)   return true;
+            else
+                if (a.destination.x2==b.destination.x2)
+                    if (a.destination.x3<b.destination.x3) return true;
+                    else
+                        if (a.destination.x3==b.destination.x3)
+                            if (a.destination.x4<b.destination.x4)  return true;
+                            else return false;
+                        else return false;
+                else return false;
+        else return false;
+
+}
+void sort_bubble(QVector<packet> &vec, int num)
+{
+    for (int i=0; i<num-1; i++)
+        for (int j=0; j<num-i-1; j++)
+            if (comp(vec[j+1], vec[j])==true)
+                swap(vec[j], vec[j+1]);
+}
+void sort_hoar(QVector<packet> &vec, int left, int right)
+{
+    int i=left;
+    int j=right;
+    int mid=(left+right+1)/2;
+    do
+    {
+        while (comp(vec[i], vec[mid])==true)
+            i++;
+        while (comp(vec[mid], vec[j])==true)
+            j--;
+        if (i<=j)
+        {
+            if (i<j) swap(vec[i], vec[j]);
+            i++;
+            j--;
+        }
+    } while (i<=j);
+    if (i<right) sort_hoar(vec, i, right);
+    if (j>left) sort_hoar(vec, left, j);
+}
+void sort_merge (QVector<packet> &vec, int left, int right, int num)
+{
+    if (left==right) return;
+    if (right-left==1)
+    {
+        if (comp(vec[right], vec[left])==true)
+            swap (vec[left], vec[right]);
+        return;
+    }
+    int mid = (left+right)/2;
+    sort_merge(vec, left, mid, num);
+    sort_merge(vec, mid+1, right, num);
+
+    QVector<packet> vec_temp;
+    vec_temp=vec;
+    int _left=left;
+    int _right=mid+1;
+    int cur=0;
+
+    while (right-left+1 != cur)
+    {
+        if (_left>mid)
+        {
+            vec_temp[cur]=vec[_right];
+            cur++; _right++;
+        }
+        else if (_right>right)
+        {
+            vec_temp[cur]=vec[_left];
+            cur++; _left++;
+        }
+        else if (comp(vec[_right], vec[_left]))
+        {
+            vec_temp[cur]=vec[_right];
+            cur++; _right++;
+        }
+        else
+        {
+            vec_temp[cur]=vec[_left];
+            cur++; _left++;
+        }
+    }
+    for (int i=0; i<cur; i++)
+        vec[i+left]=vec_temp[i];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
