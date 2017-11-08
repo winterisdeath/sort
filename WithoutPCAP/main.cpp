@@ -207,6 +207,7 @@ int main()
     file_merge.close();
     file_bubble.close();
     file_hoar.close();
+    file_sort.close();
     output.close();
     file.close();
     delete[] buf;
